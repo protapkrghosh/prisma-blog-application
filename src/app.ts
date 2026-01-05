@@ -3,6 +3,7 @@ import express, { type Application } from "express";
 import { postRouter } from "./modules/post/post.route";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
+import { commentRouter } from "./modules/comment/comment.route";
 
 const app: Application = express();
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -15,6 +16,7 @@ app.use(
    })
 );
 app.use("/posts", postRouter);
+app.use("/comments", commentRouter);
 
 app.get("/", (req, res) => {
    res.send("Welcome To Blog Application");
