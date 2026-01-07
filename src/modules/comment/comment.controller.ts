@@ -9,8 +9,10 @@ const createComment = async (req: Request, res: Response) => {
       const result = await commentService.createComment(req.body);
       res.status(201).json(result);
    } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment creation failed";
       res.status(400).json({
-         error: "Comment creation failed",
+         error: errorMessage,
          details: error,
       });
    }
@@ -22,8 +24,10 @@ const getCommentById = async (req: Request, res: Response) => {
       const result = await commentService.getCommentById(commentId as string);
       res.status(200).json(result);
    } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment fetched failed";
       res.status(400).json({
-         error: "Comment fetched failed",
+         error: errorMessage,
          details: error,
       });
    }
@@ -37,8 +41,10 @@ const getCommentByAuthor = async (req: Request, res: Response) => {
       );
       res.status(200).json(result);
    } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment fetched failed";
       res.status(400).json({
-         error: "Comment fetched failed",
+         error: errorMessage,
          details: error,
       });
    }
@@ -55,8 +61,28 @@ const updateComment = async (req: Request, res: Response) => {
       );
       res.status(200).json(result);
    } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment update failed";
       res.status(400).json({
-         error: "Comment update failed",
+         error: errorMessage,
+         details: error,
+      });
+   }
+};
+
+const moderateComment = async (req: Request, res: Response) => {
+   try {
+      const { commentId } = req.params;
+      const result = await commentService.moderateComment(
+         commentId as string,
+         req.body
+      );
+      res.status(200).json(result);
+   } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment moderate failed";
+      res.status(400).json({
+         error: errorMessage,
          details: error,
       });
    }
@@ -73,8 +99,10 @@ const deleteComment = async (req: Request, res: Response) => {
       );
       res.status(200).json(result);
    } catch (error) {
+      const errorMessage =
+         error instanceof Error ? error.message : "Comment delete failed";
       res.status(400).json({
-         error: "Comment delete failed",
+         error: errorMessage,
          details: error,
       });
    }
@@ -85,5 +113,6 @@ export const commentController = {
    getCommentById,
    getCommentByAuthor,
    updateComment,
+   moderateComment,
    deleteComment,
 };
