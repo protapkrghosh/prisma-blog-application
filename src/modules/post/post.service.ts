@@ -1,10 +1,11 @@
 import {
    CommentStatus,
+   PostStatus,
    type Post,
-   type PostStatus,
 } from "../../../generated/prisma/client";
 import type { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { UserRole } from "../../middleware/auth";
 
 const createPost = async (
    data: Omit<Post, "id" | "createdAt" | "updatedAt" | "authorId">,
@@ -285,6 +286,50 @@ const deletePost = async (
    });
 };
 
+const getStats = async () => {
+   return await prisma.$transaction(async (tx) => {
+      const [
+         totalUsers,
+         adminCount,
+         userCount,
+         totalPosts,
+         publishedPosts,
+         draftPosts,
+         archivedPosts,
+         totalViews,
+         totalComments,
+         approvedComments,
+         rejectComment,
+      ] = await Promise.all([
+         await tx.user.count(),
+         await tx.user.count({ where: { role: UserRole.ADMIN } }),
+         await tx.user.count({ where: { role: UserRole.USER } }),
+         await tx.post.count(),
+         await tx.post.count({ where: { status: PostStatus.PUBLISHED } }),
+         await tx.post.count({ where: { status: PostStatus.DRAFT } }),
+         await tx.post.count({ where: { status: PostStatus.ARCHIVED } }),
+         await tx.post.aggregate({ _sum: { views: true } }),
+         await tx.comment.count(),
+         await tx.comment.count({ where: { status: CommentStatus.APPROVED } }),
+         await tx.comment.count({ where: { status: CommentStatus.REJECT } }),
+      ]);
+
+      return {
+         totalUsers,
+         adminCount,
+         userCount,
+         totalPosts,
+         publishedPosts,
+         draftPosts,
+         archivedPosts,
+         totalViews: totalViews._sum.views,
+         totalComments,
+         approvedComments,
+         rejectComment,
+      };
+   });
+};
+
 export const postService = {
    createPost,
    getAllPost,
@@ -292,4 +337,5 @@ export const postService = {
    getMyPosts,
    updatePost,
    deletePost,
+   getStats,
 };
