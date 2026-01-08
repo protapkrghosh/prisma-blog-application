@@ -19,7 +19,7 @@ const createPost = async (req: Request, res: Response, next: NextFunction) => {
    }
 };
 
-const getAllPost = async (req: Request, res: Response) => {
+const getAllPost = async (req: Request, res: Response, next: NextFunction) => {
    try {
       // Filtering
       const { search } = req.query;
@@ -58,16 +58,11 @@ const getAllPost = async (req: Request, res: Response) => {
       });
       res.status(200).json(result);
    } catch (error) {
-      const errorMessage =
-         error instanceof Error ? error.message : "Post not found!";
-      res.status(400).json({
-         error: errorMessage,
-         details: error,
-      });
+      next(error);
    }
 };
 
-const getPostById = async (req: Request, res: Response) => {
+const getPostById = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const { postId } = req.params;
 
@@ -78,16 +73,11 @@ const getPostById = async (req: Request, res: Response) => {
       const result = await postService.getPostById(postId);
       res.status(200).json(result);
    } catch (error) {
-      const errorMessage =
-         error instanceof Error ? error.message : "Post not found!";
-      res.status(400).json({
-         error: errorMessage,
-         details: error,
-      });
+      next(error);
    }
 };
 
-const getMyPosts = async (req: Request, res: Response) => {
+const getMyPosts = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const user = req.user;
       if (!user) throw new Error("You are unauthorized!");
@@ -95,12 +85,7 @@ const getMyPosts = async (req: Request, res: Response) => {
       const result = await postService.getMyPosts(user.id);
       res.status(200).json(result);
    } catch (error) {
-      const errorMessage =
-         error instanceof Error ? error.message : "Your post not found!";
-      res.status(400).json({
-         error: errorMessage,
-         details: error,
-      });
+      next(error)
    }
 };
 
@@ -124,7 +109,7 @@ const updatePost = async (req: Request, res: Response, next: NextFunction) => {
    }
 };
 
-const deletePost = async (req: Request, res: Response) => {
+const deletePost = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const user = req.user;
       if (!user) throw new Error("Yor are unauthorized!");
@@ -138,26 +123,16 @@ const deletePost = async (req: Request, res: Response) => {
       );
       res.status(200).json(result);
    } catch (error) {
-      const errorMessage =
-         error instanceof Error ? error.message : "Post deleted failed";
-      res.status(400).json({
-         error: errorMessage,
-         details: error,
-      });
+      next(error)
    }
 };
 
-const getStats = async (req: Request, res: Response) => {
+const getStats = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const result = await postService.getStats();
       res.status(200).json(result);
    } catch (error) {
-      const errorMessage =
-         error instanceof Error ? error.message : "Stats fetched failed";
-      res.status(400).json({
-         error: errorMessage,
-         details: error,
-      });
+      next(error)
    }
 };
 

@@ -5,6 +5,7 @@ import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import { commentRouter } from "./modules/comment/comment.route";
 import errorHandler from "./middleware/globalErrorHandler";
+import { notFound } from "./middleware/notFound";
 
 const app: Application = express();
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -23,7 +24,7 @@ app.get("/", (req, res) => {
    res.send("Welcome To Blog Application");
 });
 
-// Global Error Handling
-app.use(errorHandler);
+app.use(notFound);
+app.use(errorHandler); // Global Error Handling
 
 export default app;
