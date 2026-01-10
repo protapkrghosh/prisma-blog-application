@@ -85,7 +85,7 @@ const getMyPosts = async (req: Request, res: Response, next: NextFunction) => {
       const result = await postService.getMyPosts(user.id);
       res.status(200).json(result);
    } catch (error) {
-      next(error)
+      next(error);
    }
 };
 
@@ -123,7 +123,7 @@ const deletePost = async (req: Request, res: Response, next: NextFunction) => {
       );
       res.status(200).json(result);
    } catch (error) {
-      next(error)
+      next(error);
    }
 };
 
@@ -132,7 +132,7 @@ const getStats = async (req: Request, res: Response, next: NextFunction) => {
       const result = await postService.getStats();
       res.status(200).json(result);
    } catch (error) {
-      next(error)
+      next(error);
    }
 };
 
